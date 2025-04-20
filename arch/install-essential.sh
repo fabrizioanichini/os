@@ -8,6 +8,7 @@ PACKAGES=(
   man-db
   iwd
   stow
+  openssh
 )
 
 echo "Updating system..."
