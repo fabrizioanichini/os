@@ -82,6 +82,27 @@ The `load_ssh.sh` script:
 
 This ensures the decrypted key only exists in memory, never on disk.
 
+## Decryption Process
+
+The load_ssh.sh script uses one of two methods:
+
+Direct piping:
+
+```bash
+openssl enc -d -aes-256-cbc -pbkdf2 \
+  -in id_ed25519.enc \
+  | ssh-add -
+```
+
+Or with FIFO (preferred method):
+
+```bash
+mkfifo /tmp/decrypted_key
+openssl enc -d -aes-256-cbc -pbkdf2 -in id_ed25519.enc -out /tmp/decrypted_key &
+ssh-add /tmp/decrypted_key
+rm /tmp/decrypted_key
+```
+
 ## Requirements
 
 - `openssl` with PBKDF2 support
