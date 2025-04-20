@@ -12,11 +12,9 @@ This system allows you to maintain separate SSH identities (personal, work, clie
 ssh/
 ├── load_ssh.sh            # Main script for loading keys from any profile
 ├── personal/              # Personal identity profile
-│   ├── README.md          # Profile-specific documentation
 │   ├── id_ed25519.enc     # Encrypted private key
 │   └── id_ed25519.pub     # Public key (safe to share)
 └── tomato/                # Another identity profile (e.g., for a specific client/project)
-    ├── README.md          # Profile-specific documentation
     ├── id_ed25519.enc     # Encrypted private key
     └── id_ed25519.pub     # Public key (safe to share)
 ```
