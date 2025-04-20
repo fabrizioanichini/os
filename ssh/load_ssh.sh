@@ -11,12 +11,24 @@ if [ ! -f "$KEY" ]; then
 fi
 
 [ -p "$FIFO" ] || mkfifo "$FIFO"
+chmod 600 "$FIFO"
 
 exec < /dev/tty
 
+# Decrypt in background
 openssl enc -d -aes-256-cbc -pbkdf2 -in "$KEY" -out "$FIFO" &
 sleep 0.2
 
+# Load into agent
 ssh-add "$FIFO"
+RESULT=$?
 
 rm -f "$FIFO"
+
+# Optional error check
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Failed to load SSH key — check passphrase and permissions."
+  exit 1
+else
+  echo "✅ SSH key loaded for profile: $PROFILE"
+fi
