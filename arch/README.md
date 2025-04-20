@@ -73,4 +73,4 @@ Once in the iwctl interactive prompt:
 ## Additional Resources
 
 - [Arch Wiki: iwd (Intelligent Wireless Daemon)](https://wiki.archlinux.org/title/Iwd)
-- [Dual Boot Display Configuration](./arch/tty/dual-display-boot.md)
+- [Dual Boot Display Configuration](./tty/dual-display-boot.md)
