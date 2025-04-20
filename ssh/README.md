@@ -58,7 +58,7 @@ You'll be prompted for the decryption passphrase, which should be unique for eac
    ```sh
    openssl enc -aes-256-cbc -pbkdf2 -salt \
      -in ~/.ssh/temp_key \
-     -out ~/.ssh/id_ed25519.enc
+     -out ssh/new_profile/id_ed25519.enc
    ```
 
 4. Copy the public key:
@@ -86,22 +86,71 @@ This ensures the decrypted key only exists in memory, never on disk.
 
 The load_ssh.sh script uses one of two methods:
 
-Direct piping:
-
+**Direct piping:**
 ```bash
 openssl enc -d -aes-256-cbc -pbkdf2 \
   -in id_ed25519.enc \
   | ssh-add -
 ```
 
-Or with FIFO (preferred method):
-
+**Or with FIFO (preferred method):**
 ```bash
 mkfifo /tmp/decrypted_key
 openssl enc -d -aes-256-cbc -pbkdf2 -in id_ed25519.enc -out /tmp/decrypted_key &
 ssh-add /tmp/decrypted_key
 rm /tmp/decrypted_key
 ```
+
+## Viewing or Accessing Decrypted Keys
+
+There may be times when you need to view the decrypted private key content or temporarily use it in unencrypted form. Here are secure ways to do so:
+
+### View Key Content Without Writing to Disk
+
+To view the key content in your terminal without saving it to disk:
+
+```bash
+# Display the decrypted key in terminal
+openssl enc -d -aes-256-cbc -pbkdf2 -in ssh/personal/id_ed25519.enc | cat
+```
+
+### Temporarily Decrypt to Use Outside SSH Agent
+
+If you need the decrypted key temporarily:
+
+```bash
+# Decrypt to a secured temporary file
+openssl enc -d -aes-256-cbc -pbkdf2 \
+  -in ssh/personal/id_ed25519.enc \
+  -out /tmp/temp_key
+
+# Set proper permissions
+chmod 600 /tmp/temp_key
+
+# Use the key for your purpose...
+
+# Securely delete when done
+shred -u /tmp/temp_key
+```
+
+### Temporarily Place in Standard SSH Location
+
+To temporarily use the key in the standard ~/.ssh location:
+
+```bash
+# Decrypt directly to ~/.ssh/id_ed25519
+openssl enc -d -aes-256-cbc -pbkdf2 \
+  -in ssh/personal/id_ed25519.enc \
+  -out ~/.ssh/id_ed25519_personal
+
+# Set proper permissions
+chmod 600 ~/.ssh/id_ed25519_personal
+
+# When done, remove it securely
+shred -u ~/.ssh/id_ed25519_personal
+```
+
+**⚠️ Security Warning:** Remember that having the unencrypted private key anywhere, even temporarily, increases your security risk. Always securely delete unencrypted keys when you're done with them.
 
 ## Requirements
 
