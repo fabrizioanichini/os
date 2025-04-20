@@ -56,6 +56,7 @@ This section helps you set up basic terminal tools and network connectivity on y
 - **tmux** - Terminal multiplexer for managing multiple terminal sessions
 - **man-db** - Documentation system for viewing manual pages
 - **iwd** - Modern wireless daemon for Wi-Fi connectivity
+- **stow*** - Symlink manager for neatly organizing and deploying dotfiles or configs across systems
 
 ### Installation Steps
 
