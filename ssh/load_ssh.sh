@@ -12,8 +12,11 @@ fi
 
 [ -p "$FIFO" ] || mkfifo "$FIFO"
 
-# Background decryption
+exec < /dev/tty
+
 openssl enc -d -aes-256-cbc -pbkdf2 -in "$KEY" -out "$FIFO" &
+sleep 0.2
+
 ssh-add "$FIFO"
 
 rm -f "$FIFO"
