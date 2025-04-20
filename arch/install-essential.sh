@@ -7,6 +7,7 @@ PACKAGES=(
   tmux
   man-db
   iwd
+  stow
 )
 
 echo "Updating system..."
