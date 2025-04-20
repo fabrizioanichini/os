@@ -16,61 +16,6 @@ This setup creates two separate boot entries in systemd-boot:
 1. `arch-external.conf` - Optimized for 4K external monitor
 2. `arch-internal.conf` - Configured for internal laptop display
 
-## Implementation Options
-
-You can set up the dual-display configuration using either the **automated script** or by following the **manual steps**.
-
-### Option 1: Automated Script (Recommended)
-
-For a quick and easy setup, use the included `dual-display-setup.sh` script:
-
-1. **Make the script executable**:
-   ```bash
-   chmod +x dual-display-setup.sh
-   ```
-
-2. **Run the script with sudo**:
-   ```bash
-   sudo ./dual-display-setup.sh
-   ```
-
-The script will:
-- Automatically detect your displays
-- Create the necessary boot entries
-- Set up the boot loader configuration
-- Create a recovery script
-
-#### Advanced Script Usage
-
-The script supports several command-line options:
-
-```bash
-sudo ./dual-display-setup.sh [options]
-```
-
-Options:
-- `-h, --help`: Show help message
-- `-r, --root-uuid UUID`: Specify root partition UUID manually
-- `-i, --internal DEVICE`: Specify internal display (default: eDP-1)
-- `-e, --external DEVICE`: Specify external display (default: auto-detect)
-- `-d, --detect-only`: Only detect displays without making changes
-- `-y, --yes`: Non-interactive mode (answer yes to all prompts)
-
-Examples:
-```bash
-# Just detect available displays
-sudo ./dual-display-setup.sh --detect-only
-
-# Specify everything manually
-sudo ./dual-display-setup.sh --root-uuid 12345678-abcd-1234-5678-abcdef123456 --internal eDP-1 --external DP-1
-```
-
-### Option 2: Manual Configuration
-
-If you prefer to set everything up manually or need more control, follow these steps:
-
-## Manual Implementation Steps
-
 ### 1. Identify Display Outputs
 
 First, determine the correct display identifiers:
@@ -169,5 +114,3 @@ If the system boots with the wrong configuration (e.g., external monitor selecte
 - `video=DP-1:d` - Disables the external display
 
 ---
-
-*Note: Replace the `PARTUUID` value in the configuration files with your system's actual root partition UUID.*
