@@ -11,7 +11,7 @@ cd "$(dirname "$0")/arch"
 
 # Step 1: Run install-essential.sh
 info "Running install-essential.sh..."
-bash tty/install-essential.sh
+bash install-essential.sh
 
 # Step 2: Clone dotfiles and run bootstrap
 info "Cloning dotfiles repo..."
