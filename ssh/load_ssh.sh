@@ -32,3 +32,12 @@ if [ $RESULT -ne 0 ]; then
 else
   echo "✅ SSH key loaded for profile: $PROFILE"
 fi
+
+GITCONFIG="$BASE_DIR/.gitconfig"
+
+if [ -f "$GITCONFIG" ]; then
+  export GIT_CONFIG_GLOBAL="$GITCONFIG"
+  echo "🧩 Git profile set: $GITCONFIG"
+else
+  echo "⚠️  No .gitconfig found for profile: $PROFILE"
+fi
