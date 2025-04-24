@@ -27,6 +27,6 @@ bash "$HOME/dotfiles/bootstrap.sh"
 
 # Step 3: Load SSH keys
 info "Running load_ssh.sh for 'personal' profile..."
-bash ssh/load_ssh.sh personal
+bash ../ssh/load_ssh.sh personal
 
 info "✅ Arch profile setup completed successfully."
