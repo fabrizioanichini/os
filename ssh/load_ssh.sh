@@ -15,17 +15,18 @@ chmod 600 "$FIFO"
 
 exec < /dev/tty
 
-# Decrypt in background
+# Decrypt the SSH key in the background
 openssl enc -d -aes-256-cbc -pbkdf2 -in "$KEY" -out "$FIFO" &
 sleep 0.2
 
-# Load into agent
+# Load the key into ssh-agent
 ssh-add "$FIFO"
 RESULT=$?
 
+# Remove the temporary FIFO pipe
 rm -f "$FIFO"
 
-# Optional error check
+# Check if the key was added successfully
 if [ $RESULT -ne 0 ]; then
   echo "❌ Failed to load SSH key — check passphrase and permissions."
   exit 1
@@ -33,11 +34,17 @@ else
   echo "✅ SSH key loaded for profile: $PROFILE"
 fi
 
-GITCONFIG="$BASE_DIR/.gitconfig"
+# Handle .gitconfig for the profile
+GITCONFIG_SRC="$BASE_DIR/.gitconfig"
+GITCONFIG_DEST="$HOME/.gitconfig"
 
-if [ -f "$GITCONFIG" ]; then
-  export GIT_CONFIG_GLOBAL="$GITCONFIG"
-  echo "🧩 Git profile set: $GITCONFIG"
+if [ -f "$GITCONFIG_SRC" ]; then
+  if [ -f "$GITCONFIG_DEST" ]; then
+    cp "$GITCONFIG_DEST" "$GITCONFIG_DEST.bak"
+    echo "📦 Existing .gitconfig backed up as ~/.gitconfig.bak"
+  fi
+  cp "$GITCONFIG_SRC" "$GITCONFIG_DEST"
+  echo "🧩 Copied Git profile to: $GITCONFIG_DEST"
 else
   echo "⚠️  No .gitconfig found for profile: $PROFILE"
 fi
