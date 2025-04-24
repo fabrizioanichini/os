@@ -1,42 +1,46 @@
 #!/bin/sh
 
+set -e
+
 PROFILE="$1"
 BASE_DIR="$(dirname "$0")/$PROFILE"
 KEY="$BASE_DIR/id_ed25519.enc"
-FIFO="/tmp/ssh_${PROFILE}_key"
-
-if [ ! -f "$KEY" ]; then
-  echo "❌ No encrypted key found for profile: $PROFILE"
-  exit 1
-fi
-
-[ -p "$FIFO" ] || mkfifo "$FIFO"
-chmod 600 "$FIFO"
-
-exec < /dev/tty
-
-# Decrypt the SSH key in the background
-openssl enc -d -aes-256-cbc -pbkdf2 -in "$KEY" -out "$FIFO" &
-sleep 0.2
-
-# Load the key into ssh-agent
-ssh-add "$FIFO"
-RESULT=$?
-
-# Remove the temporary FIFO pipe
-rm -f "$FIFO"
-
-# Check if the key was added successfully
-if [ $RESULT -ne 0 ]; then
-  echo "❌ Failed to load SSH key — check passphrase and permissions."
-  exit 1
-else
-  echo "✅ SSH key loaded for profile: $PROFILE"
-fi
-
-# Handle .gitconfig for the profile
 GITCONFIG_SRC="$BASE_DIR/.gitconfig"
 GITCONFIG_DEST="$HOME/.gitconfig"
+SSH_DIR="$HOME/.ssh"
+PRIVATE_KEY_DEST="$SSH_DIR/id_ed25519"
+
+if [ -z "$PROFILE" ]; then
+  echo "❌ No profile provided. Usage: $0 <profile-name>"
+  exit 1
+fi
+
+if [ ! -f "$KEY" ]; then
+  echo "❌ No encrypted key found at: $KEY"
+  exit 1
+fi
+
+mkdir -p "$SSH_DIR"
+chmod 700 "$SSH_DIR"
+
+exec < /dev/tty
+echo "🔐 Enter passphrase to decrypt SSH key for profile: $PROFILE"
+
+if [ -f "$PRIVATE_KEY_DEST" ]; then
+  mv "$PRIVATE_KEY_DEST" "$PRIVATE_KEY_DEST.bak"
+  echo "📦 Existing SSH key backed up to: $PRIVATE_KEY_DEST.bak"
+fi
+
+openssl enc -d -aes-256-cbc -pbkdf2 -in "$KEY" -out "$PRIVATE_KEY_DEST"
+chmod 600 "$PRIVATE_KEY_DEST"
+echo "✅ Decrypted SSH key written to: $PRIVATE_KEY_DEST"
+
+if pgrep -u "$USER" ssh-agent > /dev/null; then
+  ssh-add "$PRIVATE_KEY_DEST"
+  echo "🧠 SSH key added to ssh-agent"
+else
+  echo "⚠️  ssh-agent not running — key loaded but not added to agent"
+fi
 
 if [ -f "$GITCONFIG_SRC" ]; then
   if [ -f "$GITCONFIG_DEST" ]; then
