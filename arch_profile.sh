@@ -16,7 +16,7 @@ bash install-essential.sh
 # Step 2: Clone dotfiles and run bootstrap
 info "Cloning dotfiles repo..."
 if [ ! -d "$HOME/dotfiles" ]; then
-  git clone https://github.com/fabrizioanichini/dotfiles "$HOME/dotfiles"
+  git clone git@github.com:fabrizioanichini/dotfiles.git "$HOME/dotfiles"
 else
   info "dotfiles already cloned. Pulling latest changes..."
   git -C "$HOME/dotfiles" pull
