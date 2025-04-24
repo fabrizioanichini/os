@@ -9,6 +9,7 @@ PACKAGES=(
   iwd
   stow
   openssh
+  fzf
 )
 
 echo "Updating system..."
