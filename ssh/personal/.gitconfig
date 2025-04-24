@@ -1,0 +1,7 @@
+[user]
+    name = Fabrizio Anichini
+    email = fabrizioanichini@proton.me
+[pull]
+    rebase = false
+[push]
+    autoSetupRemote = true
