@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Helper to show status
 info() {
   echo -e "\n🛠️  $1"
 }
@@ -9,11 +8,9 @@ info() {
 info "Changing into arch/ directory..."
 cd "$(dirname "$0")/arch"
 
-# Step 1: Run install-essential.sh
 info "Running install-essential.sh..."
 bash install-essential.sh
 
-# Step 2: Clone dotfiles and run bootstrap
 info "Cloning dotfiles repo..."
 if [ ! -d "$HOME/dotfiles" ]; then
   git clone git@github.com:fabrizioanichini/dotfiles.git "$HOME/dotfiles"
@@ -25,8 +22,16 @@ fi
 info "Running dotfiles/bootstrap.sh..."
 bash "$HOME/dotfiles/bootstrap.sh"
 
-# Step 3: Load SSH keys
-info "Running load_ssh.sh for 'personal' profile..."
-bash ../ssh/load_ssh.sh personal
+info "✅ dotfiles/bootstrap.sh completed."
 
-info "✅ Arch profile setup completed successfully."
+echo -e "\n🔔 Please run: \033[1msource ~/.bashrc\033[0m to load the updated shell environment before continuing."
+echo -e "Once done, re-run this script with the argument: \033[1mcontinue\033[0m to proceed with SSH setup."
+
+if [[ "$1" == "continue" ]]; then
+  info "Resuming setup..."
+  info "Running load_ssh.sh for 'personal' profile..."
+  bash ../ssh/load_ssh.sh personal
+  info "✅ Arch profile setup completed successfully."
+else
+  exit 0
+fi
