@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 info() {
@@ -6,12 +7,15 @@ info() {
 }
 
 info "Changing into arch/ directory..."
+
 cd "$(dirname "$0")/arch"
 
 info "Running install-essential.sh..."
+
 bash install-essential.sh
 
 info "Cloning dotfiles repo..."
+
 if [ ! -d "$HOME/dotfiles" ]; then
   git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/dotfiles"
 else
@@ -20,6 +24,7 @@ else
 fi
 
 info "Running dotfiles/bootstrap.sh..."
+
 bash "$HOME/dotfiles/bootstrap.sh"
 
 info "✅ dotfiles/bootstrap.sh completed."
@@ -30,7 +35,19 @@ echo -e "Once done, re-run this script with the argument: \033[1mcontinue\033[0m
 if [[ "$1" == "continue" ]]; then
   info "Resuming setup..."
   info "Running load_ssh.sh for 'personal' profile..."
+  
   bash ../ssh/load_ssh.sh personal
+  
+  info "Updating dotfiles repository to use SSH instead of HTTPS..."
+  if [ -d "$HOME/dotfiles" ]; then
+    cd "$HOME/dotfiles"
+    git remote set-url origin git@github.com:fabrizioanichini/dotfiles.git
+    info "✅ Repository updated to use SSH authentication."
+    echo -e "You can now push changes without HTTPS authentication."
+  else
+    info "⚠️ Dotfiles directory not found at $HOME/dotfiles."
+  fi
+  
   info "✅ Arch profile setup completed successfully."
 else
   exit 0
