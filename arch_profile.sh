@@ -16,7 +16,7 @@ bash install-essential.sh
 
 info "Cloning dotfiles repo..."
 
-if [ ! -d "$HOME/dotfiles" ]; then
+if [ ! -d "$HOME/.dotfiles" ]; then
   git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/.dotfiles"
 else
   info "dotfiles already cloned. Pulling latest changes..."
