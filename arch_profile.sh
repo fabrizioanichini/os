@@ -17,17 +17,17 @@ bash install-essential.sh
 info "Cloning dotfiles repo..."
 
 if [ ! -d "$HOME/dotfiles" ]; then
-  git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/dotfiles"
+  git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/.dotfiles"
 else
   info "dotfiles already cloned. Pulling latest changes..."
-  git -C "$HOME/dotfiles" pull
+  git -C "$HOME/.dotfiles" pull
 fi
 
-info "Running dotfiles/bootstrap.sh..."
+info "Running .dotfiles/bootstrap.sh..."
 
-bash "$HOME/dotfiles/bootstrap.sh"
+bash "$HOME/.dotfiles/bootstrap.sh"
 
-info "✅ dotfiles/bootstrap.sh completed."
+info "✅ .dotfiles/bootstrap.sh completed."
 
 echo -e "\n🔔 Please run: \033[1msource ~/.bashrc\033[0m to load the updated shell environment before continuing."
 echo -e "Once done, re-run this script with the argument: \033[1mcontinue\033[0m to proceed with SSH setup."
@@ -39,13 +39,13 @@ if [[ "$1" == "continue" ]]; then
   bash ../ssh/load_ssh.sh personal
   
   info "Updating dotfiles repository to use SSH instead of HTTPS..."
-  if [ -d "$HOME/dotfiles" ]; then
-    cd "$HOME/dotfiles"
+  if [ -d "$HOME/.dotfiles" ]; then
+    cd "$HOME/.dotfiles"
     git remote set-url origin git@github.com:fabrizioanichini/dotfiles.git
     info "✅ Repository updated to use SSH authentication."
     echo -e "You can now push changes without HTTPS authentication."
   else
-    info "⚠️ Dotfiles directory not found at $HOME/dotfiles."
+    info "⚠️ Dotfiles directory not found at $HOME/.dotfiles."
   fi
   
   info "✅ Arch profile setup completed successfully."
