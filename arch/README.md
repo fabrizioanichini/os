@@ -52,7 +52,7 @@ This section helps you set up basic terminal tools and network connectivity on y
 
 ### What You'll Install
 
-- **vim** - Powerful terminal text editor
+- **neovim** - Powerful terminal text editor
 - **tmux** - Terminal multiplexer for managing multiple terminal sessions
 - **man-db** - Documentation system for viewing manual pages
 - **iwd** - Modern wireless daemon for Wi-Fi connectivity
