@@ -3,7 +3,6 @@
 set -e
 
 PACKAGES=(
-  vim
   neovim
   tmux
   man-db
