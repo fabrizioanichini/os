@@ -47,7 +47,19 @@ if [[ "$1" == "continue" ]]; then
   else
     info "⚠️ Dotfiles directory not found at $HOME/.dotfiles."
   fi
-  
+
+  info "Cloning OS project into ~/projects/os..."
+
+  mkdir -p "$HOME/projects"
+
+  if [ ! -d "$HOME/projects/os" ]; then
+    git clone git@github.com:fabrizioanichini/os.git "$HOME/projects/os"
+    info "✅ OS repo cloned to ~/projects/os."
+  else
+    info "📁 ~/projects/os already exists. Pulling latest changes..."
+    git -C "$HOME/projects/os" pull
+  fi
+
   info "✅ Arch profile setup completed successfully."
 else
   exit 0
