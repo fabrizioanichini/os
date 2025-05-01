@@ -1,52 +1,42 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-info() {
-  echo -e "\n🛠️  $1"
-}
+# Define the base directory
+BOOT_ENTRIES="/boot/loader/entries"
 
-info "Changing into arch/ directory..."
-cd "$(dirname "$0")/arch"
+# Find the latest non-fallback entry
+SOURCE_FILE=$(ls -t ${BOOT_ENTRIES}/*_linux.conf | grep -v "fallback" | head -n 1)
 
-info "Running install-essential.sh..."
-bash install-essential.sh
-
-info "Running bootloader setup script..."
-bash tty/setup-boot-entries.sh
-
-info "Cloning dotfiles repo..."
-if [ ! -d "$HOME/.dotfiles" ]; then
-  git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/.dotfiles"
-else
-  info "dotfiles already cloned. Pulling latest changes..."
-  git -C "$HOME/.dotfiles" pull
+if [[ ! -f "$SOURCE_FILE" ]]; then
+  echo "❌ No suitable kernel config file found."
+  exit 1
 fi
 
-info "Running .dotfiles/bootstrap.sh..."
-bash "$HOME/.dotfiles/bootstrap.sh"
-info "✅ .dotfiles/bootstrap.sh completed."
+echo "✅ Using source: $SOURCE_FILE"
 
-echo -e "\n🔔 Please run: \033[1msource ~/.bashrc\033[0m to load the updated shell environment before continuing."
-echo -e "Once done, re-run this script with the argument: \033[1mcontinue\033[0m to proceed with SSH setup."
+# Paths for new entries
+EXTERNAL="${BOOT_ENTRIES}/arch-external.conf"
+INTERNAL="${BOOT_ENTRIES}/arch-internal.conf"
 
-if [[ "$1" == "continue" ]]; then
-  info "Resuming setup..."
-  info "Running load_ssh.sh for 'personal' profile..."
-  
-  bash ../ssh/load_ssh.sh personal
-  
-  info "Updating dotfiles repository to use SSH instead of HTTPS..."
-  if [ -d "$HOME/.dotfiles" ]; then
-    cd "$HOME/.dotfiles"
-    git remote set-url origin git@github.com:fabrizioanichini/dotfiles.git
-    info "✅ Repository updated to use SSH authentication."
-    echo -e "You can now push changes without HTTPS authentication."
-  else
-    info "⚠️ Dotfiles directory not found at $HOME/.dotfiles."
-  fi
-  
-  info "✅ Arch profile setup completed successfully."
-else
-  exit 0
-fi
+# Create external config
+sudo awk '
+  /^title/ { print "title   Arch Linux (external)"; next }
+  /^options/ { print $0 " video=eDP-1:d video=DP-1:3840x2160@60"; next }
+  { print }
+' "$SOURCE_FILE" | sudo tee "$EXTERNAL" > /dev/null
+
+# Create internal config
+sudo awk '
+  /^title/ { print "title   Arch Linux (internal)"; next }
+  /^options/ { print $0 " video=DP-1:d"; next }
+  { print }
+' "$SOURCE_FILE" | sudo tee "$INTERNAL" > /dev/null
+
+# Replace loader.conf
+sudo tee /boot/loader/loader.conf > /dev/null <<EOF
+default arch-internal.conf
+timeout 4
+EOF
+
+echo "🎉 Bootloader entries created and loader.conf updated."
