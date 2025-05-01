@@ -29,6 +29,11 @@ bash "$HOME/.dotfiles/bootstrap.sh"
 
 info "✅ .dotfiles/bootstrap.sh completed."
 
+info "Enabling and starting Docker service..."
+
+sudo systemctl enable docker
+sudo systemctl start docker
+
 echo -e "\n🔔 Please run: \033[1msource ~/.bashrc\033[0m to load the updated shell environment before continuing."
 echo -e "Once done, re-run this script with the argument: \033[1mcontinue\033[0m to proceed with SSH setup."
 
