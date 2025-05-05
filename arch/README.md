@@ -58,6 +58,7 @@ This section helps you set up basic terminal tools and network connectivity on y
 - **iwd** - Modern wireless daemon for Wi-Fi connectivity
 - **stow** - Symlink manager for neatly organizing and deploying dotfiles or configs across systems
 - **openssh** - Suite of secure networking utilities based on the SSH protocol for encrypted communication and remote login.
+- **docker** - Suite of develoment tools to accellerate the delivery of apps
 
 ### Installation Steps
 

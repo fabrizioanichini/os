@@ -10,6 +10,7 @@ PACKAGES=(
   stow
   openssh
   fzf
+  docker
 )
 
 echo "Updating system..."
