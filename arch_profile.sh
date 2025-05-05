@@ -7,15 +7,16 @@ info() {
 }
 
 info "Changing into arch/ directory..."
-
 cd "$(dirname "$0")/arch"
 
 info "Running install-essential.sh..."
-
 bash install-essential.sh
 
-info "Cloning dotfiles repo..."
+info "Running bootloader setup script..."
+bash tty/setup-boot-entries.sh
 
+
+info "Cloning dotfiles repo..."
 if [ ! -d "$HOME/.dotfiles" ]; then
   git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/.dotfiles"
 else
@@ -24,18 +25,20 @@ else
 fi
 
 info "Running .dotfiles/bootstrap.sh..."
-
 bash "$HOME/.dotfiles/bootstrap.sh"
-
 info "✅ .dotfiles/bootstrap.sh completed."
+
+info "Enabling and starting Docker service..."
+sudo systemctl enable docker
+sudo systemctl start docker
 
 echo -e "\n🔔 Please run: \033[1msource ~/.bashrc\033[0m to load the updated shell environment before continuing."
 echo -e "Once done, re-run this script with the argument: \033[1mcontinue\033[0m to proceed with SSH setup."
 
 if [[ "$1" == "continue" ]]; then
   info "Resuming setup..."
-  info "Running load_ssh.sh for 'personal' profile..."
   
+  info "Running load_ssh.sh for 'personal' profile..."
   bash ../ssh/load_ssh.sh personal
   
   info "Updating dotfiles repository to use SSH instead of HTTPS..."
@@ -49,7 +52,6 @@ if [[ "$1" == "continue" ]]; then
   fi
 
   info "Cloning OS project into ~/projects/os..."
-
   mkdir -p "$HOME/projects"
 
   if [ ! -d "$HOME/projects/os" ]; then
