@@ -25,6 +25,5 @@ sudo systemctl start iwd
 
 echo "Enabling and starting Docker service..."
 sudo systemctl enable docker
-sudo systemctl start docker
 
-echo "All packages installed successfully."
+echo "All packages installed successfully. run sudo systemctl start docker after process end"
