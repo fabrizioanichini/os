@@ -8,6 +8,7 @@ PACKAGES=(
   wl-clipboard
   wmenu
   wtype
+  ttf-cascadia-code-nerd
   sway
   swaybg
   wezterm
