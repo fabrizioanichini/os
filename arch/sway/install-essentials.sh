@@ -9,6 +9,7 @@ PACKAGES=(
   wmenu
   wtype
   ttf-cascadia-code-nerd
+  firefox
   sway
   swaybg
   wezterm
