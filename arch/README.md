@@ -65,13 +65,13 @@ This section helps you set up basic terminal tools and network connectivity on y
 1. Make the installation script executable:
 
 ```bash
-chmod +x install-essential.sh
+chmod +x tty/install-essential.sh
 ```
 
 2. Run the installation script:
 
 ```bash
-./install-essential.sh
+./tty/install-essential.sh
 ```
 
 The script automatically:

@@ -10,7 +10,7 @@ info "Changing into arch/ directory..."
 cd "$(dirname "$0")/arch"
 
 info "Running install-essential.sh..."
-bash install-essential.sh
+bash tty/install-essential.sh
 
 info "Running bootloader setup script..."
 bash tty/setup-boot-entries.sh
