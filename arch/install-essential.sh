@@ -23,4 +23,8 @@ echo "Enabling and starting iwd service..."
 sudo systemctl enable iwd
 sudo systemctl start iwd
 
+info "Enabling and starting Docker service..."
+sudo systemctl enable docker
+sudo systemctl start docker
+
 echo "All packages installed successfully."
