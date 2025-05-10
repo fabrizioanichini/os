@@ -6,9 +6,10 @@ This script allows you to easily switch between different SSH and Git profiles b
 
 `load_ssh.sh` helps developers who work with multiple Git identities (personal, work, client projects, etc.) by:
 
-1. Decrypting and loading a profile-specific SSH key
-2. Installing the corresponding Git configuration
-3. Adding the SSH key to your ssh-agent (if running)
+1. Decrypting and loading a profile-specific SSH private key
+2. Copying the corresponding public key
+3. Installing the corresponding Git configuration
+4. Adding the SSH key to your ssh-agent (if running)
 
 ## Prerequisites
 
@@ -23,6 +24,7 @@ For each profile, create a directory with:
 ```
 <script_location>/<profile_name>/
 ├── id_ed25519.enc      # Encrypted SSH private key
+├── id_ed25519.pub      # SSH public key
 └── .gitconfig          # Git configuration file (optional)
 ```
 
@@ -41,10 +43,10 @@ For example:
 
 ## Security Features
 
-- SSH keys remain encrypted at rest
+- SSH private keys remain encrypted at rest
 - Keys are decrypted only when needed
 - Passphrase required for decryption
-- Proper permissions are enforced on SSH files
+- Proper permissions are enforced on SSH files (600 for private key, 644 for public key)
 - Existing keys/configs are automatically backed up
 
 ## What It Does
@@ -55,16 +57,18 @@ When run, the script:
 2. Checks that the encrypted key exists
 3. Creates the SSH directory if it doesn't exist
 4. Prompts for the decryption passphrase
-5. Backs up any existing SSH key
-6. Decrypts the profile's SSH key
-7. Sets appropriate permissions (600) on the key
-8. Adds the key to ssh-agent if it's running
-9. Backs up and replaces your Git configuration (if provided)
+5. Backs up any existing SSH keys (both private and public)
+6. Decrypts the profile's SSH private key
+7. Copies the profile's public key (if available)
+8. Sets appropriate permissions on both keys
+9. Adds the key to ssh-agent if it's running
+10. Backs up and replaces your Git configuration (if provided)
 
 ## Backup Behavior
 
 The script automatically creates backups:
-- Existing SSH keys are backed up to `~/.ssh/id_ed25519.bak`
+- Existing SSH private keys are backed up to `~/.ssh/id_ed25519.bak`
+- Existing SSH public keys are backed up to `~/.ssh/id_ed25519.pub.bak`
 - Existing Git configs are backed up to `~/.gitconfig.bak`
 
 ## Creating New Profiles
@@ -72,21 +76,30 @@ The script automatically creates backups:
 To create a new profile:
 
 1. Create a directory with your profile name
-2. Generate and encrypt your SSH key:
+2. Generate an SSH key pair:
    ```bash
    ssh-keygen -t ed25519 -C "your_email@example.com"
+   ```
+3. Encrypt your private key:
+   ```bash
    openssl enc -aes-256-cbc -pbkdf2 -in ~/.ssh/id_ed25519 -out /path/to/profile/id_ed25519.enc
    ```
-3. Add your Git configuration to the profile directory
+4. Copy your public key to the profile directory:
+   ```bash
+   cp ~/.ssh/id_ed25519.pub /path/to/profile/
+   ```
+5. Add your Git configuration to the profile directory
 
 ## Notes
 
 - Currently supports Ed25519 keys only
-- Only one SSH key is loaded at a time
+- Only one SSH key pair is loaded at a time
 - Requires interactive terminal for passphrase entry
+- Public key copying is optional (will work without it)
 
 ## Troubleshooting
 
 - **"No profile provided"**: You need to specify a profile name
 - **"No encrypted key found"**: Check if the key exists at the expected location
+- **"No public key found"**: The script will still work, but you may want to add the public key to your profile
 - **"ssh-agent not running"**: Start ssh-agent with `eval "$(ssh-agent -s)"`
