@@ -6,6 +6,7 @@ PACKAGES=(
   brightnessctl
   gammastep
   wl-clipboard
+  wmenu
   wtype
   sway
   swaybg
