@@ -1,14 +1,14 @@
 #!/bin/sh
-
 set -e
-
 PROFILE="$1"
 BASE_DIR="$(dirname "$0")/$PROFILE"
 KEY="$BASE_DIR/id_ed25519.enc"
+PUBLIC_KEY_SRC="$BASE_DIR/id_ed25519.pub"
 GITCONFIG_SRC="$BASE_DIR/.gitconfig"
 GITCONFIG_DEST="$HOME/.gitconfig"
 SSH_DIR="$HOME/.ssh"
 PRIVATE_KEY_DEST="$SSH_DIR/id_ed25519"
+PUBLIC_KEY_DEST="$SSH_DIR/id_ed25519.pub"
 
 if [ -z "$PROFILE" ]; then
   echo "❌ No profile provided. Usage: $0 <profile-name>"
@@ -34,6 +34,19 @@ fi
 openssl enc -d -aes-256-cbc -pbkdf2 -in "$KEY" -out "$PRIVATE_KEY_DEST"
 chmod 600 "$PRIVATE_KEY_DEST"
 echo "✅ Decrypted SSH key written to: $PRIVATE_KEY_DEST"
+
+# Handle public key
+if [ -f "$PUBLIC_KEY_SRC" ]; then
+  if [ -f "$PUBLIC_KEY_DEST" ]; then
+    mv "$PUBLIC_KEY_DEST" "$PUBLIC_KEY_DEST.bak"
+    echo "📦 Existing public SSH key backed up to: $PUBLIC_KEY_DEST.bak"
+  fi
+  cp "$PUBLIC_KEY_SRC" "$PUBLIC_KEY_DEST"
+  chmod 644 "$PUBLIC_KEY_DEST"
+  echo "🔑 Public SSH key copied to: $PUBLIC_KEY_DEST"
+else
+  echo "⚠️  No public key found for profile: $PROFILE"
+fi
 
 if pgrep -u "$USER" ssh-agent > /dev/null; then
   ssh-add "$PRIVATE_KEY_DEST"
