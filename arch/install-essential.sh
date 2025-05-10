@@ -20,7 +20,7 @@ echo "Installing packages: ${PACKAGES[*]}"
 sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
 
 echo "Enabling and starting iwd service..."
-sudo systemctl enable iwd.service
-sudo systemctl start iwd.service
+sudo systemctl enable iwd
+sudo systemctl start iwd
 
 echo "All packages installed successfully."
