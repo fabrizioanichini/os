@@ -18,6 +18,9 @@ bash tty/setup-boot-entries.sh
 info "Running keymap setup script..."
 bash tty/setup-tty-keymap.sh
 
+info "Running sway script..."
+bash sway/install-essentials.sh
+
 info "Cloning dotfiles repo..."
 if [ ! -d "$HOME/.dotfiles" ]; then
   git clone https://github.com/fabrizioanichini/dotfiles.git "$HOME/.dotfiles"
