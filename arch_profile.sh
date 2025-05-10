@@ -15,7 +15,7 @@ bash install-essential.sh
 info "Running bootloader setup script..."
 bash tty/setup-boot-entries.sh
 
-info "Running bootloader setup script..."
+info "Running keymap setup script..."
 bash tty/setup-tty-keymap.sh
 
 info "Cloning dotfiles repo..."
